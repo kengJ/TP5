@@ -1,0 +1,76 @@
+php lamp环境安装
+http://blog.csdn.net/qq_29755359/article/details/68940773
+安装mysql
+sudo apt-get install mariadb-server
+安装apache
+sudo apt-get install apache2
+修改apache2.conf配置
+sudo vim /etc/apache2/apache2.conf  => 修改参数KeepAlive为Off
+修改mpm_prefork.conf配置
+sudo vim /etc/apache2/mods-available/mpm_prefork.conf
+=> 设置参数
+<IfModule mpm_prefork_module>
+StartServers            2
+MinSpareServers         6
+MaxSpareServers         12
+MaxRequestWorkers       39
+MaxConnectionsPerChild  3000
+</IfModule>
+禁用和启动模块
+sudo a2dismod mpm_event
+sudo a2enmod mpm_prefork
+重启apache
+sudo systemctl restart apache2
+
+配置虚拟主机环境
+拷贝默认配置文件
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/laozuo.org.conf
+修改配置文件
+sudo vim /etc/apache2/sites-available/laozuo.org.conf
+=>修改配置为
+<Directory /var/www/html/laozuo.org/public_html>
+Require all granted
+</Directory>
+<VirtualHost *:80>
+ServerName laozuo.org
+ServerAlias www.laozuo.org
+ServerAdmin webmaster@localhost
+DocumentRoot /var/www/html/laozuo.org/public_html
+ErrorLog /var/www/html/laozuo.org/logs/error.log
+CustomLog /var/www/html/laozuo.org/logs/access.log combined
+</VirtualHost>
+创建需要目录/文件
+sudo mkdir -p /var/www/html/laozuo.org/{public_html,logs}
+启动站点
+sudo a2ensite laozuo.org.conf
+禁止默认根目录配置
+sudo a2dissite 000-default.conf
+重启apache
+sudo systemctl reload apache2
+
+安装php7
+sudo apt-get install php7.0 php-pear libapache2-mod-php7.0 php7.0-mysql
+添加组件
+sudo apt-get install php7.0-curl php7.0-json php7.0-cgi
+配置文件/etc/php/7.0/apache2/php.ini
+max_input_time = 30
+error_reporting = E_COMPILE_ERROR | E_RECOVERABLE_ERROR | E_ERROR | E_CORE_ERROR
+error_log = /var/log/php/error.log
+创建日志目录
+sudo mkdir /var/log/php
+sudo chown www-data /var/log/php
+重启apache
+sudo systemctl restart apache2
+
+Ubuntu14.04下安装Composer
+http://blog.csdn.net/qq_29755359/article/details/68940857
+安装curl
+sudo apt install curl
+下载Composer
+curl -sS https://getcomposer.org/installer | php
+安装
+/usr/bin/php composer.phar --version
+设置全局命令
+sudo mv composer.phar /usr/local/bin/composer
+查看是否安装成功
+composer -version
