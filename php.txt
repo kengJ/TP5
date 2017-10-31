@@ -1,0 +1,38 @@
+命名空间
+namespace
+1.在相同命名空间下不能有相同名的函数和类
+2.命名空间内不能用defind，只能用const
+3.调用命名空间
+<?php
+namespace kj1;
+function test1(){
+	echo 'kj1';
+}
+namespace kj2;
+function test1(){
+	echo 'kj2';
+}
+\kj1\test1();
+?>
+
+命名空间访问方式
+1.非限定名称访问方式：test();
+2.限定名称访问方式:test1\test();;
+3.完全限定名称访问方式:\test1\test();
+
+中文支持
+header("content-type:text/html; charset=utf-8");
+
+变量调用
+class Animal{
+	public $obj = 'test1';
+	static $name = 'test2';
+}
+$animal = new Animal();
+echo $animal -> obj;
+echo $animal::$name;
+
+引入命名空间
+use \beijing\putuo；
+putuo\getmsg();
+注:同时可以引入类
